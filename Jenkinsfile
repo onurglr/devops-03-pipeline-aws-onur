@@ -1,8 +1,8 @@
 pipeline {
     agent {
-node {
+
         label 'My-Jenkins-Agent'
-  }
+
     }
 
     tools {
