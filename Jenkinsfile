@@ -1,8 +1,7 @@
 pipeline {
     agent {
 node {
-
-        label: 'My-Jenkins-Agent'
+        label 'My-Jenkins-Agent'
   }
     }
 
