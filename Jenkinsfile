@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label: 'My-Jenkins-Agent'
+    }
 
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
@@ -15,16 +17,20 @@ pipeline {
         }
         stage('Build Maven') {
             steps {
+                script{
                 if (isUnix()){
                     sh'mvn clean install'
                 }else{  bat 'mvn clean install'}
             }
+            }
         }
         stage('Test Maven') {
             steps {
+                script{
                if (isUnix()){
                     sh'mvn test'
                 }else{  bat 'mvn test'}
+            }
             }
         }
 
@@ -53,10 +59,11 @@ pipeline {
 
         stage('Docker  Image Clean') {
             steps {
+            script{
               if (isUnix()){
                     sh 'docker image prune -f'
                 }else{   bat 'docker image prune -f'}
-               
+               }
             }
         }
 */
