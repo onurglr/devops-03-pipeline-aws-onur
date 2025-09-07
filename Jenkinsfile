@@ -15,14 +15,14 @@ pipeline {
         }
         stage('Build Maven') {
             steps {
-                if(isUnix()){
+                if (isUnix()){
                     sh'mvn clean install'
                 }else{  bat 'mvn clean install'}
             }
         }
         stage('Test Maven') {
             steps {
-               if(isUnix()){
+               if (isUnix()){
                     sh'mvn test'
                 }else{  bat 'mvn test'}
             }
@@ -53,7 +53,7 @@ pipeline {
 
         stage('Docker  Image Clean') {
             steps {
-              if(isUnix()){
+              if (isUnix()){
                     sh 'docker image prune -f'
                 }else{   bat 'docker image prune -f'}
                
