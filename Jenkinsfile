@@ -36,6 +36,21 @@ pipeline {
             }
         }
 
+             stage("SonarQube Analysis") {
+            steps {
+                script {
+                    withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') {
+                        if (isUnix()) {
+                            // Linux or MacOS
+                            sh "mvn sonar:sonar"
+                        } else {
+                            bat 'mvn sonar:sonar'  // Windows
+                        }
+                    }
+                }
+            }
+        }
+
         /*
         stage('Docker Image') {
             steps {
