@@ -4,13 +4,13 @@ pipeline {
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
         maven 'Maven3'
-        jdk 'Java17'
+        jdk 'Java21'
     }
 
     stages {
         stage('SGM Github') {
             steps {
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/onurglr/devops-02-pipeline']])
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/onurglr/devops-03-pipeline-aws']])
             }
         }
         stage('Build Maven') {
@@ -23,6 +23,8 @@ pipeline {
                 bat 'mvn test'
             }
         }
+
+        /*
         stage('Docker Image') {
             steps {
                 script {
@@ -50,6 +52,7 @@ pipeline {
                 bat 'docker image prune -f'
             }
         }
+*/
 
     }
 }
