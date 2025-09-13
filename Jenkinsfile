@@ -39,7 +39,7 @@ pipeline {
              stage("SonarQube Analysis") {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'jenkins-sonar-token') {
+                    withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') {
                         if (isUnix()) {
                             // Linux or MacOS
                             sh "mvn sonar:sonar"
