@@ -1,26 +1,21 @@
 pipeline {
     agent {
-
         label 'My-Jenkins-Agent'
-
     }
-
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
         maven 'Maven3'
         jdk 'Java21'
     }
-    
-    environment{
+    environment {
         APP_NAME = "devops-03-pipeline-aws-onur"
         RELEASE = "1.0"
         GITHUB_USER = "onurglr"
         DOCKER_USER = "onurguler18"
         DOCKER_LOGIN = "onur_id_dockerhub_rwd"
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
-        IMAGE_TAG= "${RELEASE}.${BUILD_NUMBER}"
+        IMAGE_TAG = "${RELEASE}.${BUILD_NUMBER}"
     }
-
     stages {
         stage('SGM Github') {
             steps {
@@ -29,24 +24,27 @@ pipeline {
         }
         stage('Build Maven') {
             steps {
-                script{
-                if (isUnix()){
-                    sh'mvn clean install'
-                }else{  bat 'mvn clean install'}
-            }
+                script {
+                    if (isUnix()) {
+                        sh'mvn clean install'
+                    } else  {
+                        bat 'mvn clean install'
+                    }
+                }
             }
         }
         stage('Test Maven') {
             steps {
-                script{
-               if (isUnix()){
-                    sh'mvn test'
-                }else{  bat 'mvn test'}
-            }
+                script {
+                    if (isUnix()) {
+                        sh'mvn test'
+                    } else  {
+                        bat 'mvn test'
+                    }
+                }
             }
         }
-
-             stage("SonarQube Analysis") {
+        stage("SonarQube Analysis") {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'jenkins-sonar-token') {
@@ -60,16 +58,13 @@ pipeline {
                 }
             }
         }
-
-        
-        stage("Quality Gate"){
-           steps {
-               script {
+        stage("Quality Gate") {
+            steps {
+                script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonar-token'
                 }
             }
         }
-
         /*
         
          stage('Docker Image') {
@@ -96,12 +91,9 @@ pipeline {
             }
         }
         */
-
-
         stage('Build & Push Docker Image to DockerHub') {
             steps {
                 script {
-
                     docker.withRegistry('', DOCKER_LOGIN) {
                         docker_image = docker.build "${IMAGE_NAME}"
                         docker_image.push("${IMAGE_TAG}")
@@ -110,17 +102,38 @@ pipeline {
                 }
             }
         }
-
         stage("Trivy Scan") {
-    steps {
-        script {
-            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image "${IMAGE_NAME}":latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+            steps {
+                script {
+                    sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image "${IMAGE_NAME}":latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+                }
+            }
         }
-    }
-}
+
+        
+        stage('Cleanup Old Docker Images') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        // Bu repo için tüm image’leri al, tarihe göre sırala, son 3 hariç sil
+                        sh """
+                docker images "${env.IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.CreatedAt}}" \\
+                | sort -r -k2 \\
+                | tail -n +4 \\
+                | awk '{print \$1}' \\
+                | xargs -r docker rmi -f
+                """
+                    } else {
+                        bat """
+                for /f "skip=3 tokens=1" %%i in ('docker images ${env.IMAGE_NAME} --format "{{.Repository}}:{{.Tag}}" ^| sort') do docker rmi -f %%i
+                            """
+                    }
+                }
+            }
+        }
 
 
-
+        
         /*
 
         stage('Deploy Kubernetes') {
@@ -139,6 +152,5 @@ pipeline {
             }
         }
 */
-
     }
 }
