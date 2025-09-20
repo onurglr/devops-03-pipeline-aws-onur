@@ -95,7 +95,7 @@ pipeline {
                 }
             }
         }
-        /*
+        */
 
 
         stage('Build & Push Docker Image to DockerHub') {
@@ -113,7 +113,7 @@ pipeline {
 
 
 
-        */
+        /*
 
         stage('Deploy Kubernetes') {
             steps {
