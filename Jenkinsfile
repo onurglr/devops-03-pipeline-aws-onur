@@ -17,8 +17,8 @@ pipeline {
         GITHUB_USER = "onurglr"
         DOCKER_USER = "onurguler18"
         DOCKER_LOGIN = "onur_id_dockerhub_rwd"
-        IMAGE_NAME = "${DOCKER_USER}" + "/"+ "${APP_NAME}"
-        IMAGE_TAG= "${RELEASE}"."${BUILD_NUMBER}"
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG= "${RELEASE}.${BUILD_NUMBER}"
     }
 
     stages {
