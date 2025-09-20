@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.mimaraslan</groupId>
-    <artifactId>devops-03-pipeline-aws</artifactId>
+    <artifactId>devops-03-pipeline-aws-onur</artifactId>
     <version>1.0.1</version>
     <name>devops-03-pipeline-aws-onur</name>
     <description>devops-03-pipeline-aws-onur</description>
