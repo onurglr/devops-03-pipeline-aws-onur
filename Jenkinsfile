@@ -10,6 +10,16 @@ pipeline {
         maven 'Maven3'
         jdk 'Java21'
     }
+    
+    environment{
+        APP_NAME = "devops-03-pipeline-aws-onur"
+        RELEASE = "1.0"
+        GITHUB_USER = "onurglr"
+        DOCKER_USER = "onurguler18"
+        DOCKER_LOGIN = "onur_id_dockerhub_rwd"
+        IMAGE_NAME = ${DOCKER_USER} + "/"+ ${APP_NAME}
+        IMAGE_TAG= ${RELEASE}.${BUILD_NUMBER}
+    }
 
     stages {
         stage('SGM Github') {
@@ -50,6 +60,8 @@ pipeline {
                 }
             }
         }
+
+        
         stage("Quality Gate"){
            steps {
                script {
@@ -59,7 +71,16 @@ pipeline {
         }
 
         /*
-        stage('Docker Image') {
+        
+         stage('Docker Image') {
+             steps {
+             //    sh 'docker build  -t  onurguler18/devops-application:latest   .'
+                 bat 'docker build  -t  onurguler18/devops-application:latest  .'
+             }
+         }
+
+        
+        stage('Docker Image To DockerHub') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'onur_id_dockerhub_rwd', variable: 'dockerhub')]) {
@@ -74,6 +95,25 @@ pipeline {
                 }
             }
         }
+        /*
+
+
+        stage('Build & Push Docker Image to DockerHub') {
+            steps {
+                script {
+
+                    docker.withRegistry('', DOCKER_LOGIN) {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push("latest")
+                    }
+                }
+            }
+        }
+
+
+
+        */
 
         stage('Deploy Kubernetes') {
             steps {
