@@ -119,13 +119,13 @@ pipeline {
                         sh """
                 docker images "${env.IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.CreatedAt}}" \\
                 | sort -r -k2 \\
-                | tail -n +4 \\
+                | tail -n +3 \\
                 | awk '{print \$1}' \\
                 | xargs -r docker rmi -f
                 """
                     } else {
                         bat """
-                for /f "skip=3 tokens=1" %%i in ('docker images ${env.IMAGE_NAME} --format "{{.Repository}}:{{.Tag}}" ^| sort') do docker rmi -f %%i
+                for /f "skip=2 tokens=1" %%i in ('docker images ${env.IMAGE_NAME} --format "{{.Repository}}:{{.Tag}}" ^| sort') do docker rmi -f %%i
                             """
                     }
                 }
