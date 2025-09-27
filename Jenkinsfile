@@ -13,6 +13,7 @@ pipeline {
         DOCKER_LOGIN = "dockerhub_token"
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}.${BUILD_NUMBER}"
+        DOCKER_HOST = "tcp://localhost:2375"
     }
     stages {
         stage('SGM Github') {
