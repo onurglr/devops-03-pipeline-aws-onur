@@ -139,6 +139,26 @@ pipeline {
         }
 
 
+    stage("Trigger CD Pipeline") {
+    steps {
+        script {
+            powershell '''
+                $url = "http://localhost:8080/job/onur-devops-03-pipeline-aws-gitops/buildWithParameters?token=GITOPS_TRIGGER_START"
+                $body = "IMAGE_TAG=${env:IMAGE_TAG}"
+                $auth = "admin:${env:JENKINS_API_TOKEN}"
+
+                Write-Host "Triggering CD pipeline with IMAGE_TAG=$($env:IMAGE_TAG)..."
+
+                curl -v -k -u $auth -X POST `
+                    -H "cache-control: no-cache" `
+                    -H "content-type: application/x-www-form-urlencoded" `
+                    --data $body `
+                    $url
+            '''
+        }
+    }
+}
+
         
         /*
 
