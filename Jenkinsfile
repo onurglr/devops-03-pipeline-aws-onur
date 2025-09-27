@@ -42,6 +42,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage("SonarQube Analysis") {
             steps {
                 script {
@@ -63,6 +64,7 @@ pipeline {
                 }
             }
         }
+        */
         /*
         
          stage('Docker Image') {
@@ -100,6 +102,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage("Trivy Scan") {
             steps {
                 script {
@@ -107,7 +110,7 @@ pipeline {
                 }
             }
         }
-
+*/
         
         stage('Cleanup Old Docker Images') {
             steps {
