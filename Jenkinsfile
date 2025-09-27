@@ -42,6 +42,7 @@ pipeline {
                 }
             }
         }
+        
         /*
         stage("SonarQube Analysis") {
             steps {
@@ -63,10 +64,7 @@ pipeline {
                     waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonar-token'
                 }
             }
-        }
-        */
-        /*
-        
+        }   
          stage('Docker Image') {
              steps {
              //    sh 'docker build  -t  onurguler18/devops-application:latest   .'
