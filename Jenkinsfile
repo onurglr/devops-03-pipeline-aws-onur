@@ -91,7 +91,7 @@ pipeline {
             }
         }
         */
-        stage('Build & Push Docker Image to DockerHub') {
+          stage('Build & Push Docker Image to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('', DOCKER_LOGIN) {
@@ -112,53 +112,37 @@ pipeline {
         }
 */
         
-        stage('Cleanup Old Docker Images') {
+         stage('Cleanup Old Docker Images') {
             steps {
                 script {
                     if (isUnix()) {
                         // Bu repo için tüm image’leri al, tarihe göre sırala, son 3 hariç sil
                         sh """
-                docker images "${env.IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.CreatedAt}}" \\
-                | sort -r -k2 \\
-                | tail -n +3 \\
-                | awk '{print \$1}' \\
-                | xargs -r docker rmi -f
+                            docker images "${env.IMAGE_NAME}" --format "{{.Repository}}:{{.Tag}} {{.CreatedAt}}" \\
+                            | sort -r -k2 \\
+                            | tail -n +4 \\
+                            | awk '{print \$1}' \\
+                            | xargs -r docker rmi -f
+                        """
 
-                # Ek olarak dangling image'leri prune et
-                docker image prune -f
-                """
                     } else {
                         bat """
-                for /f "skip=2 tokens=1" %%i in ('docker images ${env.IMAGE_NAME} --format "{{.Repository}}:{{.Tag}}" ^| sort') do docker rmi -f %%i
-
-                rem Ek olarak dangling image'leri prune et
-                docker image prune -f
-                            """
+                             for /f "skip=3 tokens=1" %%i in ('docker images ${env.IMAGE_NAME} --format "{{.Repository}}:{{.Tag}}" ^| sort') do docker rmi -f %%i
+                        """
                     }
                 }
             }
         }
 
 
-stage("Trigger CD Pipeline") {
-    steps {
-        script {
-            powershell '''
-                $url = "http://localhost:8080/job/onur-devops-03-pipeline-aws-gitops/buildWithParameters?token=GITOPS_TRIGGER_START"
-                $body = "IMAGE_TAG=${env:IMAGE_TAG}"
-                $pair = "admin:${env:JENKINS_API_TOKEN}"
-                $encodedAuth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($pair))
-                $headers = @{ Authorization = "Basic $encodedAuth" }
 
-                Write-Host "Triggering CD pipeline with IMAGE_TAG=$($env:IMAGE_TAG)..."
-
-                Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $body -ContentType "application/x-www-form-urlencoded"
-            '''
+        stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    sh "curl -v -k --user admin:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'http://localhost:8080/job/onur-devops-03-pipeline-aws-gitops/buildWithParameters?token=GITOPS_TRIGGER_START'"
+                }
+            }
         }
-    }
-}
-
-
         
         /*
 
