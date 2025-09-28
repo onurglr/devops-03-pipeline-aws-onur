@@ -8,7 +8,7 @@
         <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.mimaraslan</groupId>
+    <groupId>com.onurguler</groupId>
     <artifactId>devops-03-pipeline-aws-onur</artifactId>
     <version>1.0.1</version>
     <name>devops-03-pipeline-aws-onur</name>

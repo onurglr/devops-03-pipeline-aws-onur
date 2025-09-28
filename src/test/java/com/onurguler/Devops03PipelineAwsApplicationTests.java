@@ -1,4 +1,4 @@
-package com.mimaraslan;
+package com.onurguler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
